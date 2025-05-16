@@ -17,6 +17,7 @@ import requests,os,json,sys
 load_dotenv()
 
 def main(duration="day"):
+    print("[*] Fetching data..")
     NVD_API_KEY = os.getenv("NVD_API_KEY")
     today = datetime.now().isoformat()
     
@@ -26,9 +27,11 @@ def main(duration="day"):
         time_change = change_month(today)
     validity = check_valid_api(NVD_API_KEY)
     if validity:
+        print("[V] API is accesible")
         n_results = check_number_of_results(time_change,today)
         data = filter_by_date(time_change,today,5)
         latest_cve = find_latest_cve(data)
+        print("[V] Data collected")
         return latest_cve
     else:
         print("[!] API unaccessible at the moment...")
@@ -66,7 +69,7 @@ def find_latest_cve(data):
         
 
 def check_valid_api(NVD_API_KEY):
-    url = "https://services.nvd.nist.gov/rest/json/cves/2.0"
+    url = "https://services.nvd.nist.gov/rest/json/cves/2.0?resultsPerPage=5"
     r = requests.get(url=url)
     if r.status_code == 200:
         return True

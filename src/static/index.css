@@ -1,0 +1,29 @@
+html {
+    height: 100vh;
+    background-color: rgb(222, 244, 251);
+}
+
+body {
+    display:flex;
+    flex-direction: column;
+}
+
+#header {
+
+}
+
+#main_section {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 2fr);
+    gap: 20px;
+}
+
+#top_left {
+ 
+}
+
+#footer {
+    width: 100vw;
+    text-align: center;
+}

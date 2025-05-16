@@ -2,18 +2,40 @@
 <html>
 <head>
     <meta charset="UTF-8" />
-    <title>CVE_Watcher </title>
+    <link rel="stylesheet" href="../static/index.css">
+    <title>CVE_Watcher</title>
 </head>
 <body>
     <div id="header">
-
+        Source: NVD
     </div>
     <div id="main_section">
-        <p>{{data}}</p>
+        <div id="top_left">
+            <h2>Last Recorded CVE</h2>
+            <p><strong>CVE:</strong> {{data.id}}</p>
+            <p><strong>Researcher:</strong> {{data.sourceIdentifier}}</p>
+            <p><strong>Publised on:</strong> {{data.published}}</p>
+            <p><strong>Status:</strong> {{data.vulnStatus}}</p>
+            <p><strong>Description:</strong> {{description}}</p>
+            <h2>Metrics</h2>
+            <p><strong>CVSS4 Base Score & Severity:</strong> {{ cvss4_metrics.baseScore}} / {{ cvss4_metrics.baseSeverity}}</p>
+            <p><strong>CVSS3.1 Base Score & Severity:</strong> {{ cvss3_metrics.baseScore}} / {{ cvss3_metrics.baseSeverity}}</p>
+            <p><strong>CVSS4 Attack vector:</strong> {{ cvss4_metrics.attackVector}}</p>
+            <p><strong>Vector:</strong> {{ cvss4_metrics.vectorString }}</p>
+            <!-- <p><strong>data:</strong> {{data}}</p> -->
+        </div>
+        <div id="top_right">
+            <p>top_right</p>
+        </div>
+        <div id="bottom_left">
+            <p>botom_right</p>
+        </div>
+        <div id="bottom_right">
+            <p>bottom_right</p>
+        </div>
     </div>
     <div id="footer">
-
-
+        <p>Last refresh: {{time}}</p> 
     </div>
     
 </body>
