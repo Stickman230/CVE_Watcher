@@ -7,26 +7,29 @@ __maintainer__ = "Maxime Reynaud"
 __status__     = "Production"
 
 
-from src.constants import LOGO
+from constants import LOGO
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
 
-import requests,os,json
+
+import requests,os,json,sys
 
 load_dotenv()
 
-def main():
+def main(duration="day"):
     NVD_API_KEY = os.getenv("NVD_API_KEY")
-    
     today = datetime.now().isoformat()
-    last_day = change_day(today)
-    #last_month = change_month(today)
+    
+    if duration == "day":
+        time_change = change_day(today)
+    elif duration == "month":
+        time_change = change_month(today)
     validity = check_valid_api(NVD_API_KEY)
     if validity:
-        n_results = check_number_of_results(last_day,today)
-        data = filter_by_date(last_day,today,5)
+        n_results = check_number_of_results(time_change,today)
+        data = filter_by_date(time_change,today,5)
         latest_cve = find_latest_cve(data)
-        print(latest_cve)
+        return latest_cve
     else:
         print("[!] API unaccessible at the moment...")
         return False
@@ -87,5 +90,4 @@ def filter_by_date(startdate,enddate,n):
     else:
         return r.status_code
     
-if __name__ == "__main__":
-    main()
+
