@@ -9,7 +9,7 @@ app = Flask(__name__)
 @app.route('/')
 def home():
     time = datetime.today()
-    data = main()
+    data,top_3,week_data = main()
     # with open("../results.txt","r") as file:
     #     data = file.read()
     try:
@@ -26,13 +26,15 @@ def home():
             except:
                 cvss31_metrics = {'baseScore':'Unavailable','baseSeverity':'Unavailable','attackVector':'Unavailable','vectorString':'Unavailable'}
                 cvss4_metrics = {'baseScore':'Unavailable','baseSeverity':'Unavailable','attackVector':'Unavailable','vectorString':'Unavailable'}
-    try:            
+    try:           
         description = data['descriptions'][0]['value']
         weaknesses = data['weaknesses'][0]['description']
+        timestamps = [item[2] for item in week_data]
+        severities = [item[1] for item in week_data]
     except TypeError:
         return render_template("index.html")
       
-    return render_template("index.html", data=data,cvss4_metrics=cvss4_metrics, cvss3_metrics=cvss31_metrics,description=description,weakness=weaknesses,time=time)
+    return render_template("index.html", data=data,cvss4_metrics=cvss4_metrics, cvss3_metrics=cvss31_metrics,description=description,weakness=weaknesses,top_3=top_3,timestamps=timestamps,severities=severities,time=time)
 
 if __name__ == "__main__":
     app.run(debug=True)

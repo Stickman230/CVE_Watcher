@@ -14,17 +14,22 @@ body {
 
 #main_section {
     display: flex;
-    flex-direction: row; 
+    flex-direction: row;
+    height: 90%;
     
 }
 
 #top_left {
+    border: 2px solid black;
+    border-radius: 2%;
+    padding: 0.5%;
     width: 50%;
     color: white;
 }
 
 #main_content {
     width: 75%;
+    margin-left: 2%;
 }
 
 #cwes {
@@ -35,7 +40,12 @@ body {
 
 #top_right {
     width: 50%;
-    padding: 5%;
+    border-radius: 2%;
+}
+
+#top_top_right {
+    padding: 0.5%;
+    border: 2px solid black;
 }
 
 #top_right_title {
@@ -49,25 +59,18 @@ body {
     gap: 3%;   
 }
 
-#cve_n1 {
+#cve_n {
     display: flex;
     flex-direction: column;
 }
 
-#cve_n2 {
-    display: flex;
-    flex-direction: column;
-}
-
-#cve_n3 {
-    display: flex;
-    flex-direction: column;
-}
 
 #footer {
+    position: fixed;
+    bottom: 0%;
+    left: 28%;
     display: flex;
     flex-direction: row;
-    justify-content: center;
     gap: 5vw;
 }
 

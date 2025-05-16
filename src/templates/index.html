@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="refresh" content="110"> 
     <link rel="stylesheet" href="../static/index.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <title>CVE_Watcher</title>
 </head>
 <body>
@@ -34,20 +35,20 @@
             </div>
         </div>
         <div id="top_right">
-            <h2 id="top_right_title">This week highest rated CVES</h2>
-            <div id="cves">
-                <div id="cve_n1">
-                    <p><strong>CVE:</strong> {{data.id}}</p>
-                    <p><strong>CVSS3.1 Base Score & Severity:</strong> {{ cvss3_metrics.baseScore}} / {{ cvss3_metrics.baseSeverity}}</p>
+            <div id="top_top_right">
+                <h2 id="top_right_title">This week highest rated CVES</h2>
+                <div id="cves">
+                    {% for cve,severity,date in top_3 %}
+                        <div id="cve_n">
+                            <p><strong>CVE:</strong> {{cve}}</p>
+                            <p><strong>CVSS Base Score</strong> {{severity}}</p>
+                            <p><strong>Date:</strong> {{date}}</p>
+                        </div>
+                    {% endfor %}
                 </div>
-                <div id="cve_n2">
-                    <p><strong>CVE:</strong> {{data.id}}</p>
-                    <p><strong>CVSS3.1 Base Score & Severity:</strong> {{ cvss3_metrics.baseScore}} / {{ cvss3_metrics.baseSeverity}}</p>
-                </div>
-                <div id="cve_n3">
-                    <p><strong>CVE:</strong> {{data}}</p>
-                    <p><strong>CVSS3.1 Base Score & Severity:</strong> {{ cvss3_metrics.baseScore}} / {{ cvss3_metrics.baseSeverity}}</p>
-                </div>
+            </div>
+            <div id="bottom_top_right">
+                
             </div>
         </div>
     </div>
