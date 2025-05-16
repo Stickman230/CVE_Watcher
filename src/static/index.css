@@ -40,12 +40,13 @@ body {
 
 #top_right {
     width: 50%;
-    border-radius: 2%;
+    padding: 0.5%;
 }
 
 #top_top_right {
-    padding: 0.5%;
+    padding: 1%;
     border: 2px solid black;
+    border-radius: 2%;
 }
 
 #top_right_title {
@@ -64,6 +65,11 @@ body {
     flex-direction: column;
 }
 
+#bottom_top_right {
+    padding: 1%;
+    border: 2px solid black;
+    border-radius: 2%;
+}
 
 #footer {
     position: fixed;
