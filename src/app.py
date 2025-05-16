@@ -3,7 +3,6 @@ from RT_CVE import main
 from datetime import datetime
 
 
-
 app = Flask(__name__)
 
 
@@ -27,9 +26,13 @@ def home():
             except:
                 cvss31_metrics = {'baseScore':'Unavailable','baseSeverity':'Unavailable','attackVector':'Unavailable','vectorString':'Unavailable'}
                 cvss4_metrics = {'baseScore':'Unavailable','baseSeverity':'Unavailable','attackVector':'Unavailable','vectorString':'Unavailable'}
-                
-    description = data['descriptions'][0]['value']
-    return render_template("index.html", data=data,cvss4_metrics=cvss4_metrics, cvss3_metrics=cvss31_metrics,description=description,time=time)
+    try:            
+        description = data['descriptions'][0]['value']
+        weaknesses = data['weaknesses'][0]['description']
+    except TypeError:
+        return render_template("index.html")
+      
+    return render_template("index.html", data=data,cvss4_metrics=cvss4_metrics, cvss3_metrics=cvss31_metrics,description=description,weakness=weaknesses,time=time)
 
 if __name__ == "__main__":
     app.run(debug=True)

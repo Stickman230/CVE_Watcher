@@ -2,41 +2,71 @@
 <html>
 <head>
     <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="110"> 
     <link rel="stylesheet" href="../static/index.css">
     <title>CVE_Watcher</title>
 </head>
 <body>
     <div id="header">
-        Source: NVD
+        
     </div>
     <div id="main_section">
         <div id="top_left">
-            <h2>Last Recorded CVE</h2>
-            <p><strong>CVE:</strong> {{data.id}}</p>
-            <p><strong>Researcher:</strong> {{data.sourceIdentifier}}</p>
-            <p><strong>Publised on:</strong> {{data.published}}</p>
-            <p><strong>Status:</strong> {{data.vulnStatus}}</p>
-            <p><strong>Description:</strong> {{description}}</p>
-            <h2>Metrics</h2>
-            <p><strong>CVSS4 Base Score & Severity:</strong> {{ cvss4_metrics.baseScore}} / {{ cvss4_metrics.baseSeverity}}</p>
-            <p><strong>CVSS3.1 Base Score & Severity:</strong> {{ cvss3_metrics.baseScore}} / {{ cvss3_metrics.baseSeverity}}</p>
-            <p><strong>CVSS4 Attack vector:</strong> {{ cvss4_metrics.attackVector}}</p>
-            <p><strong>Vector:</strong> {{ cvss4_metrics.vectorString }}</p>
-            <!-- <p><strong>data:</strong> {{data}}</p> -->
+            <div id="main_content">
+                <h2>Last Recorded CVE</h2>
+                <p><strong>CVE:</strong> {{data.id}}</p>
+                <p><strong>Researcher:</strong> {{data.sourceIdentifier}}</p>
+                <p><strong>Publised on:</strong> {{data.published}}</p>
+                <p><strong>Status:</strong> {{data.vulnStatus}}</p>
+                <p><strong>Description:</strong> {{description}}</p>
+                <h2>Metrics</h2>
+                <p><strong>CVSS4 Base Score & Severity:</strong> {{ cvss4_metrics.baseScore}} / {{ cvss4_metrics.baseSeverity}}</p>
+                <p><strong>CVSS3.1 Base Score & Severity:</strong> {{ cvss3_metrics.baseScore}} / {{ cvss3_metrics.baseSeverity}}</p>
+                <p><strong>CVSS4 Attack vector:</strong> {{ cvss4_metrics.attackVector}}</p>
+                <div id="cwes">
+                    <p><strong>CWE:  </strong></p>
+                    {% for item in weakness %}
+                    <p>  {{ item.value }}</p>
+                    {% endfor %}
+                </div>
+                <p><strong>Vector:</strong> {{ cvss4_metrics.vectorString }}</p>
+                <!-- <p><strong>data:</strong> {{data}}</p> -->
+            </div>
         </div>
         <div id="top_right">
-            <p>top_right</p>
+            <h2 id="top_right_title">This week highest rated CVES</h2>
+            <div id="cves">
+                <div id="cve_n1">
+                    <p><strong>CVE:</strong> {{data.id}}</p>
+                    <p><strong>CVSS3.1 Base Score & Severity:</strong> {{ cvss3_metrics.baseScore}} / {{ cvss3_metrics.baseSeverity}}</p>
+                </div>
+                <div id="cve_n2">
+                    <p><strong>CVE:</strong> {{data.id}}</p>
+                    <p><strong>CVSS3.1 Base Score & Severity:</strong> {{ cvss3_metrics.baseScore}} / {{ cvss3_metrics.baseSeverity}}</p>
+                </div>
+                <div id="cve_n3">
+                    <p><strong>CVE:</strong> {{data}}</p>
+                    <p><strong>CVSS3.1 Base Score & Severity:</strong> {{ cvss3_metrics.baseScore}} / {{ cvss3_metrics.baseSeverity}}</p>
+                </div>
+            </div>
         </div>
-        <div id="bottom_left">
-            <p>botom_right</p>
-        </div>
-        <div id="bottom_right">
-            <p>bottom_right</p>
-        </div>
-    </div>
-    <div id="footer">
-        <p>Last refresh: {{time}}</p> 
     </div>
     
+    <div id="footer">
+        <p>Source: NVD</p>
+        <p>Last refresh: {{time}}</p> 
+        <div id="timer">Time since last refresh: 0s</div>
+    </div>
+    <script>
+        let seconds = 0;
+        const timerDiv = document.getElementById('timer');
+
+        setInterval(() => {
+        seconds++;
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        timerDiv.textContent = `Time since last refresh: ${mins > 0 ? mins + 'm ' : ''}${secs}s`;
+        }, 1000);
+    </script>
 </body>
 </html>

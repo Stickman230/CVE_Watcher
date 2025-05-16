@@ -25,14 +25,24 @@ def main(duration="day"):
         time_change = change_day(today)
     elif duration == "month":
         time_change = change_month(today)
+    days7 = change_week(today)
     validity = check_valid_api(NVD_API_KEY)
     if validity:
         print("[V] API is accesible")
-        n_results = check_number_of_results(time_change,today)
-        data = filter_by_date(time_change,today,5)
+        timeChange_n = check_number_of_results(time_change,today)
+        data = filter_by_date(time_change,today,timeChange_n)
         latest_cve = find_latest_cve(data)
-        print("[V] Data collected")
-        return latest_cve
+        
+        days7_n = check_number_of_results(days7,today)
+        data = filter_by_date(days7,today,days7_n)
+        print(data)
+        
+        if latest_cve:
+            print("[V] Data collected")
+            return latest_cve
+        else:
+            print("[X] Could not fetch data")
+            return False
     else:
         print("[!] API unaccessible at the moment...")
         return False
@@ -53,19 +63,29 @@ def change_day(date_str):
     new_date = date - timedelta(days=1)
     return new_date.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]
 
+def change_week(date_str):
+    date = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S.%f")
+    new_date = date - timedelta(days=7)
+    return new_date.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]
+    
+
 def find_latest_cve(data):
     date_list = []
     latest_cve = ''
-    for value in data["vulnerabilities"]:
-        published = value['cve']['published']
-        dt = datetime.strptime(published, "%Y-%m-%dT%H:%M:%S.%f")
-        date_list.append(dt)
-    date_list.sort()
-    latest_cve_date = date_list[-1].strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]
-    for value in data["vulnerabilities"]:
-        if value['cve']['published'] == latest_cve_date:
-            latest_cve = value['cve']
-    return latest_cve
+    try:
+        for value in data["vulnerabilities"]:
+            published = value['cve']['published']
+            dt = datetime.strptime(published, "%Y-%m-%dT%H:%M:%S.%f")
+            date_list.append(dt)
+        date_list.sort()
+        latest_cve_date = date_list[-1].strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]
+        for value in data["vulnerabilities"]:
+            if value['cve']['published'] == latest_cve_date:
+                latest_cve = value['cve']
+        return latest_cve
+    except TypeError:
+        return False
+    
         
 
 def check_valid_api(NVD_API_KEY):
@@ -87,6 +107,7 @@ def check_number_of_results(startdate,enddate,n=5):
     
 def filter_by_date(startdate,enddate,n):
     url = f"https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate={startdate}&pubEndDate={enddate}&resultsPerPage={n}"
+    print(url)
     r = requests.get(url=url)
     if r.status_code == 200:
         return r.json()
