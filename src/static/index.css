@@ -22,7 +22,6 @@ body {
 #top_left {
     border: 2px solid black;
     border-radius: 2%;
-    padding: 0.5%;
     width: 50%;
     color: white;
 }
@@ -46,7 +45,7 @@ body {
 #top_top_right {
     padding: 1%;
     border: 2px solid black;
-    border-radius: 2%;
+    border-radius: 1%;
 }
 
 #top_right_title {
@@ -67,6 +66,7 @@ body {
 
 #bottom_top_right {
     padding: 1%;
+    margin: 1.5% 0.5% 0 0.5%;
     border: 2px solid black;
     border-radius: 2%;
 }

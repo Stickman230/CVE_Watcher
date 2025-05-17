@@ -36,11 +36,12 @@ def main(duration="day"):
         days7_n = check_number_of_results(days7,today)
         data = filter_by_date(days7,today,days7_n)
         top_3 = find_top_3(data)
+        week_data = find_week_data(data)
         
         print(top_3)
         if latest_cve and top_3:
             print("[V] Data collected")
-            return latest_cve,top_3,data
+            return latest_cve,top_3,week_data
         else:
             print("[X] Could not fetch data")
             return False
@@ -91,17 +92,35 @@ def find_top_3(data):
     try:
         for value in data["vulnerabilities"]:
             try:
-                cvss_score.append((value['cve']['id'],value['cve']['metrics']['cvssMetricV31'][0]['cvssData']['baseScore'],value['cve']['published']))
+                cvss_score.append((value['cve']['id'],value['cve']['metrics']['cvssMetricV31'][0]['cvssData']['baseScore'],value['cve']['metrics']['cvssMetricV31'][0]['cvssData']['baseSeverity'],value['cve']['published']))
             except KeyError:
                 try:
-                    cvss_score.append((value['cve']['id'],value['cve']['metrics']['cvssMetricV40'][0]['cvssData']['baseScore'],value['cve']['published']))
+                    cvss_score.append((value['cve']['id'],value['cve']['metrics']['cvssMetricV40'][0]['cvssData']['baseScore'],value['cve']['metrics']['cvssMetricV40'][0]['cvssData']['baseSeverity'],value['cve']['published']))
                 except KeyError :
                     try:
-                        cvss_score.append((value['cve']['id'],value['cve']['metrics']['cvssMetricV30'][0]['cvssData']['baseScore'],value['cve']['published']))
+                        cvss_score.append((value['cve']['id'],value['cve']['metrics']['cvssMetricV30'][0]['cvssData']['baseScore'],value['cve']['metrics']['cvssMetricV30'][0]['cvssData']['baseSeverity'] ,value['cve']['published']))
                     except KeyError:
-                        cvss_score.append((0,0))
+                        cvss_score.append((0,0,'INFO',0))
         top_3 = sorted(cvss_score, key=lambda x: x[1], reverse=True)[:3]
         return top_3
+    except TypeError:
+        return False
+    
+def find_week_data(data):
+    cvss_score = []
+    try:
+        for value in data["vulnerabilities"]:
+            try:
+                cvss_score.append((value['cve']['id'],value['cve']['metrics']['cvssMetricV31'][0]['cvssData']['baseScore'],value['cve']['metrics']['cvssMetricV31'][0]['cvssData']['baseSeverity'],value['cve']['published']))
+            except KeyError:
+                try:
+                    cvss_score.append((value['cve']['id'],value['cve']['metrics']['cvssMetricV40'][0]['cvssData']['baseScore'],value['cve']['metrics']['cvssMetricV40'][0]['cvssData']['baseSeverity'],value['cve']['published']))
+                except KeyError :
+                    try:
+                        cvss_score.append((value['cve']['id'],value['cve']['metrics']['cvssMetricV30'][0]['cvssData']['baseScore'],value['cve']['metrics']['cvssMetricV30'][0]['cvssData']['baseSeverity'] ,value['cve']['published']))
+                    except KeyError:
+                        cvss_score.append((0,0,'INFO',0))
+        return cvss_score
     except TypeError:
         return False
 

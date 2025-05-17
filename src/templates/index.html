@@ -36,9 +36,9 @@
         </div>
         <div id="top_right">
             <div id="top_top_right">
-                <h2 id="top_right_title">This week highest rated CVES</h2>
+                <h2 id="top_right_title">Last 7 days highest rated CVES</h2>
                 <div id="cves">
-                    {% for cve,severity,date in top_3 %}
+                    {% for cve,severity,score,date in top_3 %}
                         <div id="cve_n">
                             <p><strong>CVE:</strong> {{cve}}</p>
                             <p><strong>CVSS Base Score</strong> {{severity}}</p>
@@ -48,7 +48,43 @@
                 </div>
             </div>
             <div id="bottom_top_right">
-                
+                <h2>Last 7 days CVEs per CVSS Score</h2>
+                <canvas id="scoreHistogram" width="600" height="310"></canvas>
+
+                <script>
+                    const ctx = document.getElementById('scoreHistogram').getContext('2d');
+                    const chart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: {{ scores | tojson }},
+                            datasets: [{
+                                label: 'Number of CVEs',
+                                data: {{ counts | tojson }},
+                                backgroundColor: {{ colors | tojson }},
+                                borderColor: {{ colors | tojson }},
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'CVSS Score'
+                                    }
+                                },
+                                y: {
+                                    beginAtZero: true,
+                                    title: {
+                                        display: true,
+                                        text: 'Count of CVEs'
+                                    }
+                                }
+                            }
+                        }
+                    });
+                </script>
+
             </div>
         </div>
     </div>
