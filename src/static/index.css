@@ -15,15 +15,15 @@ body {
 #main_section {
     display: flex;
     flex-direction: row;
-    height: 90%;
-    
 }
 
 #top_left {
     border: 2px solid black;
     border-radius: 2%;
     width: 50%;
+    height: 95vh;
     color: white;
+    font-size: 1.4em;
 }
 
 #main_content {
@@ -39,24 +39,27 @@ body {
 
 #top_right {
     width: 50%;
-    padding: 0.5%;
-}
+    padding: 0 0.5% 0.5% 0.5%;
+}      
 
 #top_top_right {
     padding: 1%;
     border: 2px solid black;
-    border-radius: 1%;
+    margin: 0 0.5% 0 0.5%;
+    border-radius: 2%;
+    height: 34vh;
 }
 
 #top_right_title {
     text-align: center;
+    margin-bottom: 5%;
 }
 
 #cves {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    gap: 3%;   
+    gap: 15% 3%;   
 }
 
 #cve_n {
@@ -73,11 +76,12 @@ body {
 
 #footer {
     position: fixed;
+    align-items: center;
     bottom: 0%;
     left: 28%;
     display: flex;
     flex-direction: row;
-    gap: 5vw;
+    gap: 8vw;
 }
 
 #timer {

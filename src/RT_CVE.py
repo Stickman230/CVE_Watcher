@@ -15,6 +15,12 @@ from datetime import datetime, timedelta
 import requests,os,json,sys
 
 load_dotenv()
+HTTP_PROXY = "http://gateway.schneider.zscaler.net:9480"
+HTTPS_PROXY = "http://gateway.schneider.zscaler.net:9480"
+proxies = {
+    "http" : HTTP_PROXY,
+    "https" : HTTPS_PROXY
+}
 
 def main(duration="day"):
     print("[*] Fetching data..")
@@ -38,7 +44,6 @@ def main(duration="day"):
         top_3 = find_top_3(data)
         week_data = find_week_data(data)
         
-        print(top_3)
         if latest_cve and top_3:
             print("[V] Data collected")
             return latest_cve,top_3,week_data
@@ -126,7 +131,7 @@ def find_week_data(data):
 
 def check_valid_api(NVD_API_KEY):
     url = "https://services.nvd.nist.gov/rest/json/cves/2.0?resultsPerPage=5"
-    r = requests.get(url=url)
+    r = requests.get(url=url,proxies=proxies)
     if r.status_code == 200:
         return True
     else:
@@ -134,7 +139,7 @@ def check_valid_api(NVD_API_KEY):
 
 def check_number_of_results(startdate,enddate,n=5):
     url = f"https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate={startdate}&pubEndDate={enddate}&resultsPerPage=1"
-    r = requests.get(url=url)
+    r = requests.get(url=url,proxies=proxies)
     n_results = r.json()["totalResults"]
     if r.status_code == 200:
         return n_results
@@ -143,7 +148,7 @@ def check_number_of_results(startdate,enddate,n=5):
     
 def filter_by_date(startdate,enddate,n):
     url = f"https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate={startdate}&pubEndDate={enddate}&resultsPerPage={n}"
-    r = requests.get(url=url)
+    r = requests.get(url=url,proxies=proxies)
     if r.status_code == 200:
         return r.json()
     else:

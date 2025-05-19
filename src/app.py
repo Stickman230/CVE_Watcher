@@ -36,7 +36,6 @@ def home():
         score_map = defaultdict(lambda: {'count': 0, 'max_severity': 'INFO'})
 
         for cve in week_data:
-            print(cve)
             score_map[cve[1]]['count'] += 1
             # Update max severity if current is higher
             if severity_priority.get(cve[2], 0) > severity_priority.get(score_map[cve[1]]['max_severity'], 0):
