@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="110"> 
+    <link rel="stylesheet" href="../static/index.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>CVE_Watcher</title>
+</head>
+<body>
+    <div id="header">
+        
+    </div>
+    <div id="main_section">
+        <div id="top_left">
+            <div id="main_content">
+                <h2>Last Recorded CVE</h2>
+                <p><strong>CVE:</strong> {{data.id}}</p>
+                <p><strong>Researcher:</strong> {{data.sourceIdentifier}}</p>
+                <p><strong>Publised on:</strong> {{data.published}}</p>
+                <p><strong>Status:</strong> {{data.vulnStatus}}</p>
+                <p><strong>Description:</strong> {{description}}</p>
+                <h2>Metrics</h2>
+                <p><strong>CVSS4 Base Score & Severity:</strong> {{ cvss4_metrics.baseScore}} / {{ cvss4_metrics.baseSeverity}}</p>
+                <p><strong>CVSS3.1 Base Score & Severity:</strong> {{ cvss3_metrics.baseScore}} / {{ cvss3_metrics.baseSeverity}}</p>
+                <p><strong>CVSS4 Attack vector:</strong> {{ cvss4_metrics.attackVector}}</p>
+                <div id="cwes">
+                    <p><strong>CWE:  </strong></p>
+                    {% for item in weakness %}
+                    <p>  {{ item.value }}</p>
+                    {% endfor %}
+                </div>
+                <p><strong>Vector:</strong> {{ cvss4_metrics.vectorString }}</p>
+            </div>
+        </div>
+        <div id="top_right">
+            <div id="top_top_right">
+                <h2 id="top_right_title">Last 7 days highest rated CVES</h2>
+                <div id="cves">
+                    {% for cve,severity,score,date in top_3 %}
+                        <div id="cve_n">
+                            <p><strong>CVE:</strong> {{cve}}</p>
+                            <p><strong>CVSS Base Score</strong> {{severity}}</p>
+                            <p><strong>Date:</strong> {{date}}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div id="bottom_top_right">
+                <h2>Last 7 days CVEs per CVSS Score</h2>
+                <canvas id="scoreHistogram" width="600" height="350"></canvas>
+
+                <script>
+                    const ctx = document.getElementById('scoreHistogram').getContext('2d');
+                    const chart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: {{ scores | tojson }},
+                            datasets: [{
+                                label: 'Number of CVEs',
+                                data: {{ counts | tojson }},
+                                backgroundColor: {{ colors | tojson }},
+                                borderColor: {{ colors | tojson }},
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'CVSS Score'
+                                    }
+                                },
+                                y: {
+                                    beginAtZero: true,
+                                    title: {
+                                        display: true,
+                                        text: 'Count of CVEs'
+                                    }
+                                }
+                            }
+                        }
+                    });
+                </script>
+
+            </div>
+        </div>
+    </div>
+    
+    <div id="footer">
+        <p>Source: NVD</p>
+        <p>Last refresh: {{time}}</p> 
+        <div id="timer">Time since last refresh: 0s</div>
+    </div>
+    <script>
+        let seconds = 0;
+        const timerDiv = document.getElementById('timer');
+
+        setInterval(() => {
+        seconds++;
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        timerDiv.textContent = `Time since last refresh: ${mins > 0 ? mins + 'm ' : ''}${secs}s`;
+        }, 1000);
+    </script>
+</body>
+</html>
