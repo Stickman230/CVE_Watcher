@@ -25,10 +25,15 @@ def home():
             except:
                 cvss31_metrics = {'baseScore':'Unavailable','baseSeverity':'Unavailable','attackVector':'Unavailable','vectorString':'Unavailable'}
                 cvss4_metrics = {'baseScore':'Unavailable','baseSeverity':'Unavailable','attackVector':'Unavailable','vectorString':'Unavailable'}
-    try:           
+    try:       
         description = data['descriptions'][0]['value']
+    except KeyError:
+        description = "Not given"
+    try:
         weaknesses = data['weaknesses'][0]['description']
-
+    except KeyError:
+       weaknesses = "Not given"
+    try:
         # Convert date format
         convert_published = datetime.fromisoformat(data['published'])
         published = convert_published + timedelta(hours=2)
