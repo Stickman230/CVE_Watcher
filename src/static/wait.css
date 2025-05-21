@@ -1,0 +1,17 @@
+
+#main_section {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    height: 30%;
+    width: 30%;
+    flex-direction: column;
+    margin-left: 35vw;
+}
+
+#tenor {
+    aspect-ratio: 1;
+    width: 80%;
+    height: 70%;
+
+}

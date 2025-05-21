@@ -16,16 +16,20 @@ import requests,os,qrcode
 load_dotenv()
 HTTP_PROXY = "http://gateway.schneider.zscaler.net:9480"
 HTTPS_PROXY = "http://gateway.schneider.zscaler.net:9480"
-proxies = {
-    "http" : HTTP_PROXY,
-    "https" : HTTPS_PROXY
-}
 
-def main(duration="day"):
-    print("[*] Fetching data..")
+
+def main(proxy,duration="day"):
+    if proxy:
+        proxies = {
+        "http" : HTTP_PROXY,
+        "https" : HTTPS_PROXY }
+        print("[V] Proxy Set")
+    else:
+        proxies = {}
+    print("[*] Fetching data...")
     NVD_API_KEY = os.getenv("NVD_API_KEY")
     today = datetime.now().isoformat()
-    validity = check_valid_api(NVD_API_KEY)
+    validity = check_valid_api(proxies,NVD_API_KEY)
     if validity:
         print("[V] API is accesible")
         if duration == "day":
@@ -34,14 +38,17 @@ def main(duration="day"):
             time_change = change_month(today)
         days7 = change_week(today)
         
-        timeChange_n = check_number_of_results(time_change,today)
-        data = filter_by_date(time_change,today,timeChange_n)
-        latest_cve = find_latest_cve(data)
-        
-        days7_n = check_number_of_results(days7,today)
-        data = filter_by_date(days7,today,days7_n)
-        top_3 = find_top_3(data)
-        week_data = find_week_data(data)
+        try:
+            timeChange_n = check_number_of_results(proxies,time_change,today)
+            data = filter_by_date(proxies,time_change,today,timeChange_n)
+            latest_cve = find_latest_cve(data)
+            
+            days7_n = check_number_of_results(proxies,days7,today)
+            data = filter_by_date(proxies,days7,today,days7_n)
+            top_3 = find_top_3(data)
+            week_data = find_week_data(data)
+        except:
+            return 0,0,0 
        
         if latest_cve and top_3 and make_qrcode(latest_cve):
             print("[V] Data collected")
@@ -128,7 +135,7 @@ def find_week_data(data):
     except TypeError:
         return False
 
-def check_valid_api(NVD_API_KEY):
+def check_valid_api(proxies,NVD_API_KEY):
     url = "https://services.nvd.nist.gov/rest/json/cves/2.0?resultsPerPage=5"
     r = requests.get(url=url,proxies=proxies)
     if r.status_code == 200:
@@ -136,7 +143,7 @@ def check_valid_api(NVD_API_KEY):
     else:
         return False
 
-def check_number_of_results(startdate,enddate):
+def check_number_of_results(proxies,startdate,enddate):
     url = f"https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate={startdate}&pubEndDate={enddate}&resultsPerPage=1"
     r = requests.get(url=url,proxies=proxies)
     n_results = r.json()["totalResults"]
@@ -145,7 +152,7 @@ def check_number_of_results(startdate,enddate):
     else:
         return r.status_code
     
-def filter_by_date(startdate,enddate,n):
+def filter_by_date(proxies,startdate,enddate,n):
     url = f"https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate={startdate}&pubEndDate={enddate}&resultsPerPage={n}"
     r = requests.get(url=url,proxies=proxies)
     if r.status_code == 200:
