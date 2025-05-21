@@ -37,12 +37,11 @@ body {
     gap: 1%;
 }
 
-
 #qrcode {
-    width:15%;
+    width:12%;
     position: absolute;
-    left: 32%;
-    top: 55%;
+    left: 34%;
+    top: 4%;
 }
 
 #top_right {
