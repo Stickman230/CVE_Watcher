@@ -2,12 +2,6 @@ from flask import Flask, render_template, request
 from RT_CVE import main
 from datetime import datetime,timedelta
 from collections import defaultdict
-import typing as t
-import pwd
-import sys
-import uuid
-import os,werkzeug.debug
-
 
 app = Flask(__name__)
 
