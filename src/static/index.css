@@ -23,7 +23,7 @@ body {
     width: 50%;
     height: 95vh;
     color: white;
-    font-size: 1.4em;
+    font-size: 1.35em;
 }
 
 #main_content {
@@ -35,6 +35,14 @@ body {
     display: flex;
     flex-direction: row;
     gap: 1%;
+}
+
+
+#qrcode {
+    width:15%;
+    position: relative;
+    left: 32%;
+    top: 55%;
 }
 
 #top_right {

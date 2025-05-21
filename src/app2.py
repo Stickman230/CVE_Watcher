@@ -1,11 +1,15 @@
 from flask import Flask, render_template, request
 from RT_CVE import main
-from datetime import datetime
+from datetime import datetime,timedelta
 from collections import defaultdict
+import typing as t
+import pwd
+import sys
+import uuid
+import os,werkzeug.debug
 
 
 app = Flask(__name__)
-
 
 @app.route('/')
 def home():
@@ -30,11 +34,29 @@ def home():
     try:           
         description = data['descriptions'][0]['value']
         weaknesses = data['weaknesses'][0]['description']
+
+        # Convert date format
+        convert_published = datetime.fromisoformat(data['published'])
+        published = convert_published + timedelta(hours=2)
+        published = str(published).split(".")[0]
+
+        convert_modified = datetime.fromisoformat(data['lastModified'])
+        modified = convert_modified + timedelta(hours=2)
+        modified = str(modified).split(".")[0]
+
+        new_top3 = []
+        for mydate in range(len(top_3)):
+            top3_cve = top_3[mydate][0]
+            top3_severity = top_3[mydate][1]
+            top3_score = top_3[mydate][2]
+            convert_mydate = datetime.fromisoformat(top_3[mydate][3])
+            top3_date = convert_mydate + timedelta(hours=2)
+            top3_date = str(top3_date).split(".")[0]
+            new_top3.append((top3_cve,top3_severity,top3_score,top3_date))
+
         # Severity priority order
         severity_priority = {'CRITICAL': 4, 'HIGH': 3, 'MEDIUM': 2, 'LOW': 1,'INFO': 0}
-
         score_map = defaultdict(lambda: {'count': 0, 'max_severity': 'INFO'})
-
         for cve in week_data:
             score_map[cve[1]]['count'] += 1
             # Update max severity if current is higher
@@ -58,7 +80,7 @@ def home():
     except TypeError:
         return render_template("index.html")
       
-    return render_template("index.html", data=data,cvss4_metrics=cvss4_metrics, cvss3_metrics=cvss31_metrics,description=description,weakness=weaknesses,top_3=top_3,scores=scores, counts=counts, colors=colors,time=time)
+    return render_template("index.html", data=data,published=published,modified=modified,cvss4_metrics=cvss4_metrics, cvss3_metrics=cvss31_metrics,description=description,weakness=weaknesses,top_3=new_top3,scores=scores, counts=counts, colors=colors,time=time)
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -2,7 +2,7 @@
 
 __author__     = "Maxime Reynaud"
 __license__    = "GNU General Public License"
-__version__    = "0.1.0"
+__version__    = "0.3.1"
 __maintainer__ = "Maxime Reynaud"
 __status__     = "Production"
 
@@ -11,8 +11,7 @@ from constants import LOGO
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
 
-
-import requests,os,json,sys
+import requests,os,qrcode
 
 load_dotenv()
 HTTP_PROXY = "http://gateway.schneider.zscaler.net:9480"
@@ -26,15 +25,15 @@ def main(duration="day"):
     print("[*] Fetching data..")
     NVD_API_KEY = os.getenv("NVD_API_KEY")
     today = datetime.now().isoformat()
-    
-    if duration == "day":
-        time_change = change_day(today)
-    elif duration == "month":
-        time_change = change_month(today)
-    days7 = change_week(today)
     validity = check_valid_api(NVD_API_KEY)
     if validity:
         print("[V] API is accesible")
+        if duration == "day":
+            time_change = change_day(today)
+        elif duration == "month":
+            time_change = change_month(today)
+        days7 = change_week(today)
+        
         timeChange_n = check_number_of_results(time_change,today)
         data = filter_by_date(time_change,today,timeChange_n)
         latest_cve = find_latest_cve(data)
@@ -43,8 +42,8 @@ def main(duration="day"):
         data = filter_by_date(days7,today,days7_n)
         top_3 = find_top_3(data)
         week_data = find_week_data(data)
-        
-        if latest_cve and top_3:
+       
+        if latest_cve and top_3 and make_qrcode(latest_cve):
             print("[V] Data collected")
             return latest_cve,top_3,week_data
         else:
@@ -137,7 +136,7 @@ def check_valid_api(NVD_API_KEY):
     else:
         return False
 
-def check_number_of_results(startdate,enddate,n=5):
+def check_number_of_results(startdate,enddate):
     url = f"https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate={startdate}&pubEndDate={enddate}&resultsPerPage=1"
     r = requests.get(url=url,proxies=proxies)
     n_results = r.json()["totalResults"]
@@ -153,4 +152,12 @@ def filter_by_date(startdate,enddate,n):
         return r.json()
     else:
         return r.status_code
+    
+def make_qrcode(data):
+    cve_id = data['id']
+    url = f"https://nvd.nist.gov/vuln/detail/{cve_id}"
+    img = qrcode.make(url)
+    type(img)
+    img.save("static/last_cve_QR.png")
+    return True
     
