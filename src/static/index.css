@@ -21,9 +21,11 @@ body {
     border: 2px solid black;
     border-radius: 2%;
     width: 50%;
-    height: 95vh;
+    height: auto;
+    max-height: 95vh;
     color: white;
-    font-size: 1.45em;
+    font-size: clamp(0.8rem, 1.1vmax, 1.35rem);
+    overflow:visible;
 }
 
 #main_content {
@@ -38,29 +40,32 @@ body {
 }
 
 #qrcode {
-    width:12%;
+    width:11%;
     position: absolute;
-    left: 34%;
-    top: 4%;
+    left: 35%;
+    top: 3.5%;
 }
 
 #top_right {
     width: 50%;
+    height: auto;
+    max-height: 95vh;
     padding: 0 0.5% 0.5% 0.5%;
 }      
 
 #top_top_right {
+    height: auto;
     padding: 1%;
     border: 2px solid black;
     margin: 0 0.5% 0 0.5%;
     border-radius: 2%;
     height: 34vh;
-    font-size: 1.40em;
+    font-size: clamp(0.8rem, 1.15vmax, 1.35rem);
 }
 
 #top_right_title {
     text-align: center;
-    margin-bottom: 5%;
+    margin-bottom: 3%;
 }
 
 #cves {
@@ -93,6 +98,7 @@ body {
 }
 
 #footer {
+    font-size: clamp(0.6rem, 0.75vmax, 0.95rem);
     position: fixed;
     align-items: center;
     bottom: 0%;

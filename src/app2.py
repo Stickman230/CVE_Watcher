@@ -2,7 +2,7 @@ from flask import Flask, render_template, request
 from RT_CVE import main
 from datetime import datetime,timedelta
 from collections import defaultdict
-import click,csv
+import csv
 
 app = Flask(__name__)
 
@@ -10,7 +10,7 @@ app = Flask(__name__)
 def home():
     time = datetime.today()
     try:
-        data,top_3,week_data = main(False)
+        data,top_3,week_data = main(True)
         if data == 0:
             return render_template("wait.html")
     except TypeError:
@@ -59,7 +59,6 @@ def home():
                 for row in reader:
                     if row[0].strip() == id:
                         updated_weaknesses.append(("CWE-"+str(id),row[1].split(":")[1].strip()))
-        print(updated_weaknesses)
     except KeyError:
         weaknesses = ("N/A","")
     try:
