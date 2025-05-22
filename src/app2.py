@@ -2,15 +2,19 @@ from flask import Flask, render_template, request
 from RT_CVE import main
 from datetime import datetime,timedelta
 from collections import defaultdict
+import click,csv
 
 app = Flask(__name__)
 
 @app.route('/')
 def home():
     time = datetime.today()
-    data,top_3,week_data = main()
-    # with open("../results.txt","r") as file:
-    #     data = file.read()
+    try:
+        data,top_3,week_data = main(False)
+        if data == 0:
+            return render_template("wait.html")
+    except TypeError:
+       return render_template("wait.html")
     try:
         cvss4_metrics = data['metrics']['cvssMetricV40'][0]['cvssData']
         cvss31_metrics = data['metrics']['cvssMetricV31'][0]['cvssData']
@@ -31,8 +35,33 @@ def home():
         description = "Not given"
     try:
         weaknesses = data['weaknesses'][0]['description']
+        cwe_id_list = []
+        updated_weaknesses = []
+        for cwe_id_ in range(len(weaknesses)):
+            for id in weaknesses[cwe_id_]['value']:
+                cwe_id_list.append(id)
+                
+        for id in cwe_id_list:        
+            with open('static/data/software.csv',encoding='utf-8') as file1:
+                reader = csv.reader(file1)
+                for row in reader:
+                    if row[0].strip() == id:
+                        updated_weaknesses.append(("CWE-"+str(id),row[1].split(":")[1].strip()))
+                        continue
+            with open('static/data/hardware.csv',encoding='utf-8') as file1:
+                reader = csv.reader(file1)
+                for row in reader:
+                    if row[0].strip() == id:
+                        updated_weaknesses.append(("CWE-"+str(id),row[1].split(":")[1].strip()))
+                        continue
+            with open('static/data/research.csv',encoding='utf-8') as file1:
+                reader = csv.reader(file1)
+                for row in reader:
+                    if row[0].strip() == id:
+                        updated_weaknesses.append(("CWE-"+str(id),row[1].split(":")[1].strip()))
+        print(updated_weaknesses)
     except KeyError:
-       weaknesses = "Not given"
+        weaknesses = ("N/A","")
     try:
         # Convert date format
         convert_published = datetime.fromisoformat(data['published'])
@@ -79,7 +108,7 @@ def home():
     except TypeError:
         return render_template("index.html")
       
-    return render_template("index.html", data=data,published=published,modified=modified,cvss4_metrics=cvss4_metrics, cvss3_metrics=cvss31_metrics,description=description,weakness=weaknesses,top_3=new_top3,scores=scores, counts=counts, colors=colors,time=time)
+    return render_template("index.html", data=data,published=published,modified=modified,cvss4_metrics=cvss4_metrics, cvss3_metrics=cvss31_metrics,description=description,weakness=updated_weaknesses,top_3=new_top3,scores=scores, counts=counts, colors=colors,time=time)
 
 if __name__ == "__main__":
     app.run(debug=True)

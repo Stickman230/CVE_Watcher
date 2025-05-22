@@ -28,8 +28,8 @@
                 <img id="qrcode" alt="Last CVE QR code" src="{{url_for('static',filename='/images/last_cve_QR.png')}}"/>
                 <div id="cwes">
                     <p><strong>CWE:  </strong></p>
-                    {% for item in weakness %}
-                    <p>  {{ item.value }}</p>
+                    {% for cweid,name in weakness %}
+                    <p>  {{ cweid }} ({{name}})</p>
                     {% endfor %}
                 </div>
                 <p><strong>Published on:</strong> {{published}}</p>
@@ -51,42 +51,44 @@
             </div>
             <div id="bottom_top_right">
                 <h2>Last 7 days CVEs per CVSS Score</h2>
-                <canvas id="scoreHistogram" width="600" height="350"></canvas>
-
-                <script>
-                    const ctx = document.getElementById('scoreHistogram').getContext('2d');
-                    const chart = new Chart(ctx, {
-                        type: 'bar',
-                        data: {
-                            labels: {{ scores | tojson }},
-                            datasets: [{
-                                label: 'Number of CVEs',
-                                data: {{ counts | tojson }},
-                                backgroundColor: {{ colors | tojson }},
-                                borderColor: {{ colors | tojson }},
-                                borderWidth: 1
-                            }]
-                        },
-                        options: {
-                            scales: {
-                                x: {
-                                    title: {
-                                        display: true,
-                                        text: 'CVSS Score'
+                <div class="chart-container">
+                    <canvas id="scoreHistogram"></canvas>
+                    <script>
+                        const ctx = document.getElementById('scoreHistogram').getContext('2d');
+                        const chart = new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: {{ scores | tojson }},
+                                datasets: [{
+                                    label: 'Number of CVEs',
+                                    data: {{ counts | tojson }},
+                                    backgroundColor: {{ colors | tojson }},
+                                    borderColor: {{ colors | tojson }},
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                scales: {
+                                    x: {
+                                        title: {
+                                            display: true,
+                                            text: 'CVSS Score'
+                                        }
+                                    },
+                                    y: {
+                                        beginAtZero: true,
+                                        title: {
+                                            display: true,
+                                            text: 'Count of CVEs'
+                                        }
                                     }
                                 },
-                                y: {
-                                    beginAtZero: true,
-                                    title: {
-                                        display: true,
-                                        text: 'Count of CVEs'
-                                    }
-                                }
+                                responsive: true,
+                                maintainAspectRatio: false
                             }
-                        }
-                    });
-                </script>
-
+                        });
+                    </script>
+                </div>
             </div>
         </div>
     </div>
