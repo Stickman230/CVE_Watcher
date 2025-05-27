@@ -33,6 +33,10 @@ body {
     margin-left: 2%;
 }
 
+#description {
+    line-height: 30px;
+}
+
 #cwes {
     display: flex;
     flex-direction: row;

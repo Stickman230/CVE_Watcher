@@ -11,7 +11,7 @@ from constants import LOGO
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
 
-import requests,os,qrcode
+import requests,os,qrcode,sys
 
 load_dotenv()
 HTTP_PROXY = "http://gateway.schneider.zscaler.net:9480"
@@ -29,7 +29,11 @@ def main(proxy,duration="day"):
     print("[*] Fetching data...")
     NVD_API_KEY = os.getenv("NVD_API_KEY")
     today = datetime.now().isoformat()
-    validity = check_valid_api(proxies,NVD_API_KEY)
+    try:
+        validity = check_valid_api(proxies,NVD_API_KEY)
+    except requests.exceptions.ProxyError:
+        return 1,1,1
+    
     if validity:
         print("[V] API is accesible")
         if duration == "day":
@@ -165,6 +169,9 @@ def make_qrcode(data):
     url = f"https://nvd.nist.gov/vuln/detail/{cve_id}"
     img = qrcode.make(url)
     type(img)
-    img.save("static/images/last_cve_QR.png")
+    try:
+        img.save("static/images/last_cve_QR.png")
+    except FileNotFoundError:
+        sys.exit('[X] Exiting, Project not launched from correct directory src')
     return True
     

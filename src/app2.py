@@ -13,6 +13,8 @@ def home():
         data,top_3,week_data = main(True)
         if data == 0:
             return render_template("wait.html")
+        if data == 1:
+            return render_template("proxy.html")
     except TypeError:
        return render_template("wait.html")
     try:
@@ -37,30 +39,45 @@ def home():
         weaknesses = data['weaknesses'][0]['description']
         cwe_id_list = []
         updated_weaknesses = []
-        for cwe_id_ in range(len(weaknesses)):
-            for id in weaknesses[cwe_id_]['value']:
-                cwe_id_list.append(id)
-                
-        for id in cwe_id_list:        
+        for cwe_id_ in weaknesses:
+            cwe_id_list.append(cwe_id_['value'])     
+
+        for id in cwe_id_list:
+            id = id.split('-')[1]      
             with open('static/data/software.csv',encoding='utf-8') as file1:
                 reader = csv.reader(file1)
                 for row in reader:
                     if row[0].strip() == id:
-                        updated_weaknesses.append(("CWE-"+str(id),row[1].split(":")[1].strip()))
-                        continue
+                        try:
+                            updated_weaknesses.append(("CWE-"+str(id),row[1].split(":")[1].strip()))
+                            continue
+                        except IndexError:
+                            updated_weaknesses.append(("CWE-"+str(id),row[1].strip()))
+                            continue
             with open('static/data/hardware.csv',encoding='utf-8') as file1:
                 reader = csv.reader(file1)
                 for row in reader:
                     if row[0].strip() == id:
-                        updated_weaknesses.append(("CWE-"+str(id),row[1].split(":")[1].strip()))
-                        continue
+                        try :
+                            updated_weaknesses.append(("CWE-"+str(id),row[1].split(":")[1].strip()))
+                            continue
+                        except IndexError:
+                            updated_weaknesses.append(("CWE-"+str(id),row[1].strip()))
+                            continue
             with open('static/data/research.csv',encoding='utf-8') as file1:
                 reader = csv.reader(file1)
                 for row in reader:
                     if row[0].strip() == id:
-                        updated_weaknesses.append(("CWE-"+str(id),row[1].split(":")[1].strip()))
+                        try:
+                            updated_weaknesses.append(("CWE-"+str(id),row[1].split(":")[1].strip()))
+                            continue
+                        except IndexError:
+                            updated_weaknesses.append(("CWE-"+str(id),row[1].strip()))
+                            continue
+        updated_weaknesses = set(updated_weaknesses)
+        updated_weaknesses = list(updated_weaknesses)
     except KeyError:
-        weaknesses = ("N/A","")
+        updated_weaknesses = [("N/A","N/A")]
     try:
         # Convert date format
         convert_published = datetime.fromisoformat(data['published'])
@@ -105,8 +122,9 @@ def home():
 
         colors = [severity_color_map[val['max_severity']] for _, val in sorted_scores]
     except TypeError:
-        return render_template("index.html")
-      
+        return render_template("wait.html")
+    
+    print(updated_weaknesses)
     return render_template("index.html", data=data,published=published,modified=modified,cvss4_metrics=cvss4_metrics, cvss3_metrics=cvss31_metrics,description=description,weakness=updated_weaknesses,top_3=new_top3,scores=scores, counts=counts, colors=colors,time=time)
 
 if __name__ == "__main__":
